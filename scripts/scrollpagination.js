@@ -8,9 +8,9 @@
 **	Thank you.
 */
 
-(function( $ ){
-	 
-		 
+(function($) {
+
+
  $.fn.scrollPagination = function(options) {
   	
 		var opts = $.extend($.fn.scrollPagination.defaults, options);  
@@ -19,7 +19,7 @@
 			target = obj; 
 	 	}
 		opts.scrollTarget = target;
-	 
+
 		return this.each(function() {
 		  $.fn.scrollPagination.init($(this), opts);
 		});
@@ -30,39 +30,48 @@
 	  return this.each(function() {
 	 	$(this).attr('scrollPagination', 'disabled');
 	  });
-	  
+
   };
   
   $.fn.scrollPagination.loadContent = function(obj, opts){
 	 var target = opts.scrollTarget;
-	 var mayLoadContent = $(target).scrollTop()+opts.heightOffset >= $(document).height() - $(target).height();
-	 if (mayLoadContent){
+	 var mayLoadContent = $(target).scrollTop()+opts.heightOffset >= $(obj).height() - $(target).height();
+	 if (mayLoadContent && !opts.loading){
 		 if (opts.beforeLoad != null){
-			opts.beforeLoad(); 
+			opts.beforeLoad();
 		 }
-		 $(obj).children().attr('rel', 'loaded');
+		 opts.loading = true;
 		 $.ajax({
 			  type: 'POST',
-			  url: opts.contentPage,
-			  data: opts.contentData,
+			  url: opts.url,
+			  data: {offset: opts.offset, limit: opts.limit},
 			  success: function(data){
-				$(obj).append(data); 
-				var objectsRendered = $(obj).children('[rel!=loaded]');
-				
+			  	opts.loading = false;
 				if (opts.afterLoad != null){
-					opts.afterLoad(objectsRendered);	
+					opts.afterLoad(data);	
 				}
+			  	if (data) {
+					$(obj).append(data); 
+					opts.offset += opts.limit;
+			  	} else {
+			  		$(obj).stopScrollPagination();
+			  	}
 			  },
 			  dataType: 'html'
 		 });
 	 }
-	 
+
   };
   
   $.fn.scrollPagination.init = function(obj, opts){
 	 var target = opts.scrollTarget;
+	 
+	 opts.url = $(obj).data('fetch-url');
+	 opts.offset = $(obj).children().length;
+	 if (opts.offset < opts.limit) return;
+
 	 $(obj).attr('scrollPagination', 'enabled');
-	
+
 	 $(target).scroll(function(event){
 		if ($(obj).attr('scrollPagination') == 'enabled'){
 	 		$.fn.scrollPagination.loadContent(obj, opts);		
@@ -71,17 +80,19 @@
 			event.stopPropagation();	
 		}
 	 });
-	 
+
 	 $.fn.scrollPagination.loadContent(obj, opts);
-	 
+
  };
-	
+
  $.fn.scrollPagination.defaults = {
-      	 'contentPage' : null,
-     	 'contentData' : {},
+      	 'url' : null,
+     	 'offset' : 0,
+     	 'limit' : 20,
 		 'beforeLoad': null,
 		 'afterLoad': null	,
 		 'scrollTarget': null,
-		 'heightOffset': 0		  
+		 'heightOffset': 0,
+		 'loading': false
  };	
 })( jQuery );
