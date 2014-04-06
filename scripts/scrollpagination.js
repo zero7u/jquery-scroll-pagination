@@ -65,7 +65,7 @@
   
   $.fn.scrollPagination.init = function(obj, opts){
 	 var target = opts.scrollTarget;
-	 
+
 	 opts.url = $(obj).data('fetch-url');
 	 opts.offset = $(obj).children().length;
 	 if (opts.offset < opts.limit) return;
@@ -86,13 +86,13 @@
  };
 
  $.fn.scrollPagination.defaults = {
-      	 'url' : null,
-     	 'offset' : 0,
-     	 'limit' : 20,
-		 'beforeLoad': null,
-		 'afterLoad': null	,
-		 'scrollTarget': null,
-		 'heightOffset': 0,
-		 'loading': false
+		'url' : null,
+		'offset' : 0,
+		'limit' : 20,
+		'beforeLoad': null,
+		'afterLoad': null	,
+		'scrollTarget': null,
+		'heightOffset': 0,
+		'loading': false
  };	
 })( jQuery );
