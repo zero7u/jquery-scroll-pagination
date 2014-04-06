@@ -1,3 +1,15 @@
+用法：
+$('#clips ul.clip-list').scrollPagination({
+	scrollTarget: $('#main-scroll'), // 滚动div
+	beforeLoad: function() { // before load
+		$('.load-more').removeClass('disabled').addClass('loading');
+	},
+	afterLoad: function() { // after loading
+		$('.load-more').addClass('disabled').removeClass('loading');
+	}
+});
+
+
 Official post in my blog: http://www.andersonferminiano.com/blog/2012/07/jquery-scroll-pagination/
 
 This jQuery Scroll Pagination Plugin was referred by several developer websites as:
